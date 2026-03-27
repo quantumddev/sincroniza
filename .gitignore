@@ -30,10 +30,12 @@ logs/
 # =========================================
 # DATA
 # =========================================
-data/
 data/settings.json
 data/pending_sync.json
 data/history/*.json
+# Conservar los .gitkeep para que Git rastree las carpetas vacías
+!data/.gitkeep
+!data/history/.gitkeep
 
 
 # =========================================
