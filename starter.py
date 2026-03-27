@@ -145,10 +145,10 @@ def _esperar_primer_build(timeout: int = 30) -> bool:
 
 def _crear_ventana():
     import webview  # type: ignore[import-untyped]
-    from backend.main import Api, _construir_servicios, _DATA_DIR  # noqa: PLC0415
-    from backend.app.api.dispatcher import Dispatcher  # noqa: PLC0415
-    from backend.app.api.eventos import crear_emisor_evento  # noqa: PLC0415
-    from backend.app.api.registro import registrar_todos  # noqa: PLC0415
+    from main import Api, _construir_servicios, _DATA_DIR  # noqa: PLC0415
+    from app.api.dispatcher import Dispatcher  # noqa: PLC0415
+    from app.api.eventos import crear_emisor_evento  # noqa: PLC0415
+    from app.api.registro import registrar_todos  # noqa: PLC0415
 
     servicios = _construir_servicios(_DATA_DIR)
     dispatcher = Dispatcher()

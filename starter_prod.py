@@ -24,7 +24,15 @@ else:
 
 FRONTEND_URL = (BASE_DIR / "frontend" / "dist" / "index.html").as_uri()
 
-# Añadir el backend al path
+# Directorio de datos:
+#   · ejecutable .exe → carpeta junto al propio .exe (persistente entre ejecuciones)
+#   · ejecución normal → raíz del proyecto / data
+if getattr(sys, "frozen", False):
+    DATA_DIR = Path(sys.executable).parent / "data"
+else:
+    DATA_DIR = BASE_DIR / "data"
+
+# Añadir backend/ al path → los imports son: «from app.xxx import ...»
 sys.path.insert(0, str(BASE_DIR / "backend"))
 
 
@@ -32,12 +40,12 @@ sys.path.insert(0, str(BASE_DIR / "backend"))
 
 def main() -> None:
     import webview  # type: ignore[import-untyped]
-    from backend.main import Api, _construir_servicios, _DATA_DIR  # noqa: PLC0415
-    from backend.app.api.dispatcher import Dispatcher  # noqa: PLC0415
-    from backend.app.api.eventos import crear_emisor_evento  # noqa: PLC0415
-    from backend.app.api.registro import registrar_todos  # noqa: PLC0415
+    from main import Api, _construir_servicios  # noqa: PLC0415
+    from app.api.dispatcher import Dispatcher  # noqa: PLC0415
+    from app.api.eventos import crear_emisor_evento  # noqa: PLC0415
+    from app.api.registro import registrar_todos  # noqa: PLC0415
 
-    servicios = _construir_servicios(_DATA_DIR)
+    servicios = _construir_servicios(DATA_DIR)
     dispatcher = Dispatcher()
     api = Api(dispatcher)
 
