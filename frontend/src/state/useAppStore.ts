@@ -12,6 +12,7 @@ import type {
   EstadoAnalisis,
   EstadoNodo,
   EstadoSync,
+  NodoArbolDatos,
   Perfil,
   PlanSincronizacion,
   Regla,
@@ -228,7 +229,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const { planActual } = get()
     if (!planActual) return
     const rutas = new Set<string>()
-    const recoger = (nodo: { ruta_relativa: string; hijos?: { ruta_relativa: string; hijos?: unknown[] }[] }) => {
+    const recoger = (nodo: { ruta_relativa: string; hijos?: NodoArbolDatos[] }) => {
       if (nodo.hijos && nodo.hijos.length > 0) {
         rutas.add(nodo.ruta_relativa)
         nodo.hijos.forEach(h => recoger(h))
