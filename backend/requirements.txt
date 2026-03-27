@@ -1,0 +1,16 @@
+# =========================================
+# Dependencias del backend — Sincroniza V1
+# =========================================
+
+# Ventana nativa (WebView2 en Windows)
+pywebview==6.1
+
+# Interop .NET requerido por pywebview en Windows
+# NOTA: pythonnet 3.x requiere --pre en pip install porque el stable más
+# reciente (2.5.2) no tiene wheel para Python 3.14. Instalar con:
+#   pip install --pre pythonnet
+pythonnet==3.1.0rc0
+
+# Testing
+pytest==9.0.2
+pytest-cov==7.1.0
