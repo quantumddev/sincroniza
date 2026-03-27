@@ -75,7 +75,11 @@ class PerfilServicio:
                 if metodo_comparacion is not None
                 else config.metodo_comparacion_defecto
             ),
-            reglas_exclusion_ids=reglas_exclusion_ids if reglas_exclusion_ids is not None else [],
+            reglas_exclusion_ids=(
+                reglas_exclusion_ids
+                if reglas_exclusion_ids is not None
+                else [r.id for r in config.reglas_exclusion]  # todas las reglas globales por defecto
+            ),
             reglas_propias=reglas_propias if reglas_propias is not None else [],
             umbral_eliminaciones=(
                 umbral_eliminaciones

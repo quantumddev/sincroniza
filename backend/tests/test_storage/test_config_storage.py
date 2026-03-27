@@ -10,8 +10,10 @@ from pathlib import Path
 import pytest
 
 from app.models.configuracion import ConfiguracionApp
-from app.models.enums import MetodoComparacion
-from app.storage.config_storage import SCHEMA_VERSION, ConfigStorage
+from app.models.enums import MetodoComparacion, OrigenRegla
+from app.storage.config_storage import SCHEMA_VERSION, ConfigStorage, _generar_reglas_sistema
+
+_N_REGLAS_SISTEMA = len(_generar_reglas_sistema())
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -56,7 +58,8 @@ class TestConfigStorageLeer:
         assert config.metodo_comparacion_defecto == MetodoComparacion.TAMAÑO_FECHA
         assert config.ultimas_rutas == {"origen": None, "destino": None}
         assert config.perfiles == []
-        assert config.reglas_exclusion == []
+        assert len(config.reglas_exclusion) == _N_REGLAS_SISTEMA
+        assert all(r.origen == OrigenRegla.SISTEMA for r in config.reglas_exclusion)
         assert config.umbral_eliminaciones == 10
         assert config.timeout_por_archivo == 30
         assert config.limite_historial == 50

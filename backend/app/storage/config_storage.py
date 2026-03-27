@@ -14,13 +14,61 @@ import json
 from pathlib import Path
 
 from app.models.configuracion import ConfiguracionApp
-from app.models.enums import MetodoComparacion
+from app.models.enums import MetodoComparacion, OrigenRegla, TipoRegla
+from app.models.regla import Regla
 
 # Nombre del archivo relativo al directorio ``data/``.
 SETTINGS_FILE = "settings.json"
 
 # Versión actual del esquema de settings.
 SCHEMA_VERSION = 1
+
+# Reglas de exclusión predefinidas (OrigenRegla.SISTEMA).
+_REGLAS_SISTEMA: list[tuple[str, TipoRegla]] = [
+    # Dependencias / entornos virtuales
+    ("node_modules/**",     TipoRegla.CARPETA),
+    ("venv/**",             TipoRegla.CARPETA),
+    (".venv/**",            TipoRegla.CARPETA),
+    # Cachés de herramientas
+    ("__pycache__/**",      TipoRegla.CARPETA),
+    (".pytest_cache/**",    TipoRegla.CARPETA),
+    (".mypy_cache/**",      TipoRegla.CARPETA),
+    (".cache/**",           TipoRegla.CARPETA),
+    # Artefactos de build
+    ("dist/**",             TipoRegla.CARPETA),
+    ("build/**",            TipoRegla.CARPETA),
+    ("out/**",              TipoRegla.CARPETA),
+    ("target/**",           TipoRegla.CARPETA),
+    ("coverage/**",         TipoRegla.CARPETA),
+    # Frameworks JS
+    (".next/**",            TipoRegla.CARPETA),
+    (".nuxt/**",            TipoRegla.CARPETA),
+    # Control de versiones / IDEs
+    (".git/**",             TipoRegla.CARPETA),
+    (".idea/**",            TipoRegla.CARPETA),
+    (".vscode/**",          TipoRegla.CARPETA),
+    # Archivos temporales / logs
+    ("*.log",               TipoRegla.ARCHIVO),
+    ("*.tmp",               TipoRegla.ARCHIVO),
+    (".DS_Store",           TipoRegla.ARCHIVO),
+    ("Thumbs.db",           TipoRegla.ARCHIVO),
+]
+
+
+def _generar_reglas_sistema() -> list[Regla]:
+    """Genera instancias ``Regla`` del sistema con IDs deterministas."""
+    import hashlib
+    reglas: list[Regla] = []
+    for patron, tipo in _REGLAS_SISTEMA:
+        regla_id = "sys-" + hashlib.sha1(patron.encode()).hexdigest()[:12]
+        reglas.append(Regla(
+            id=regla_id,
+            patron=patron,
+            tipo=tipo,
+            activa=True,
+            origen=OrigenRegla.SISTEMA,
+        ))
+    return reglas
 
 
 def _config_por_defecto() -> ConfiguracionApp:
@@ -31,7 +79,7 @@ def _config_por_defecto() -> ConfiguracionApp:
         metodo_comparacion_defecto=MetodoComparacion.TAMAÑO_FECHA,
         ultimas_rutas={"origen": None, "destino": None},
         perfiles=[],
-        reglas_exclusion=[],
+        reglas_exclusion=_generar_reglas_sistema(),
         restricciones_ruta={"origen_permitido": [], "destino_permitido": []},
         umbral_eliminaciones=10,
         timeout_por_archivo=30,

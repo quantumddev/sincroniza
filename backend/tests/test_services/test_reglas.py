@@ -12,7 +12,9 @@ import pytest
 from app.models.enums import OrigenRegla, TipoRegla
 from app.models.regla import Regla
 from app.services.reglas import ReglasServicio
-from app.storage.config_storage import ConfigStorage
+from app.storage.config_storage import ConfigStorage, _generar_reglas_sistema
+
+_N_REGLAS_SISTEMA = len(_generar_reglas_sistema())
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -48,14 +50,16 @@ def _insertar_regla_sistema(storage: ConfigStorage, regla: Regla) -> None:
 
 
 class TestListarObtener:
-    def test_lista_vacia_sin_reglas(self, servicio: ReglasServicio) -> None:
-        assert servicio.listar() == []
+    def test_solo_reglas_sistema_por_defecto(self, servicio: ReglasServicio) -> None:
+        reglas = servicio.listar()
+        assert len(reglas) == _N_REGLAS_SISTEMA
+        assert all(r.origen == OrigenRegla.SISTEMA for r in reglas)
 
     def test_lista_reglas_existentes(self, storage, servicio: ReglasServicio) -> None:
         _insertar_regla_sistema(storage, _regla_sistema())
         creada = servicio.crear("*.log", TipoRegla.ARCHIVO)
         resultado = servicio.listar()
-        assert len(resultado) == 2
+        assert len(resultado) == _N_REGLAS_SISTEMA + 2
         ids = {r.id for r in resultado}
         assert "sys-1" in ids
         assert creada.id in ids
@@ -176,26 +180,33 @@ class TestEliminar:
 
 
 class TestEvaluar:
-    def test_evaluar_sin_reglas(self, servicio: ReglasServicio) -> None:
-        assert servicio.evaluar("archivo.log", es_carpeta=False) is None
+    def test_evaluar_sin_reglas_usuario(self, servicio: ReglasServicio) -> None:
+        # Las reglas del sistema ya existen; probamos una ruta que no coincida
+        assert servicio.evaluar("mi_documento.txt", es_carpeta=False) is None
+
+    def test_regla_sistema_coincide(self, servicio: ReglasServicio) -> None:
+        # *.log es regla del sistema por defecto
+        resultado = servicio.evaluar("archivo.log", es_carpeta=False)
+        assert resultado is not None
+        assert resultado.origen == OrigenRegla.SISTEMA
 
     def test_evaluar_coincide(self, servicio: ReglasServicio) -> None:
-        regla = servicio.crear("*.log", TipoRegla.ARCHIVO, activa=True)
-        resultado = servicio.evaluar("debug.log", es_carpeta=False)
+        regla = servicio.crear("*.xyz", TipoRegla.ARCHIVO, activa=True)
+        resultado = servicio.evaluar("report.xyz", es_carpeta=False)
         assert resultado is not None
         assert resultado.id == regla.id
 
     def test_evaluar_no_coincide(self, servicio: ReglasServicio) -> None:
-        servicio.crear("*.log", TipoRegla.ARCHIVO, activa=True)
+        servicio.crear("*.xyz", TipoRegla.ARCHIVO, activa=True)
         assert servicio.evaluar("debug.txt", es_carpeta=False) is None
 
     def test_evaluar_regla_inactiva_no_aplica(self, servicio: ReglasServicio) -> None:
-        servicio.crear("*.log", TipoRegla.ARCHIVO, activa=False)
-        assert servicio.evaluar("debug.log", es_carpeta=False) is None
+        servicio.crear("*.xyz", TipoRegla.ARCHIVO, activa=False)
+        assert servicio.evaluar("report.xyz", es_carpeta=False) is None
 
     def test_evaluar_tipo_carpeta(self, servicio: ReglasServicio) -> None:
-        regla = servicio.crear("node_modules", TipoRegla.CARPETA, activa=True)
-        resultado = servicio.evaluar("node_modules", es_carpeta=True)
+        regla = servicio.crear("mis_datos", TipoRegla.CARPETA, activa=True)
+        resultado = servicio.evaluar("mis_datos", es_carpeta=True)
         assert resultado is not None
         assert resultado.id == regla.id
 
