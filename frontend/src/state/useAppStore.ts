@@ -136,7 +136,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   // ── Perfiles ────────────────────────────────────────────────────────────────
 
   cargarPerfiles: async () => {
-    const perfiles = await llamarRpc<Perfil[]>('perfil.listar')
+    const perfiles = await llamarRpc<Perfil[]>('perfil.listar') ?? []
     set({ perfiles })
     const { perfilActivo } = get()
     if (perfilActivo) {
@@ -177,7 +177,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   // ── Reglas ──────────────────────────────────────────────────────────────────
 
   cargarReglas: async () => {
-    const reglas = await llamarRpc<Regla[]>('reglas.listar')
+    const reglas = await llamarRpc<Regla[]>('reglas.listar') ?? []
     set({ reglasGlobales: reglas })
   },
 

@@ -32,7 +32,11 @@ export default function App() {
   useEffect(() => {
     const arrancar = async () => {
       inicializarEventos(logAgregar, procesarEvento)
-      await Promise.all([cargarPerfiles(), cargarReglas()])
+      try {
+        await Promise.all([cargarPerfiles(), cargarReglas()])
+      } catch {
+        // Sin bridge pywebview (desarrollo puro en navegador) — la UI arranca vacía
+      }
       setInicializado(true)
     }
     arrancar()

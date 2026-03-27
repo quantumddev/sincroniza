@@ -104,6 +104,13 @@ export async function llamarRpc<T>(
 
   const bridge = window.pywebview?.api
   if (!bridge) {
+    if (import.meta.env.DEV) {
+      // En desarrollo sin pywebview simulamos respuestas vacías para que la UI cargue.
+      // En producción (pywebview presente) este bloque nunca se ejecuta.
+      console.warn(`[RPC dev] Sin pywebview — respondiendo vacío para: ${metodo}`)
+      const mock: RespuestaRpcOk<unknown> = { jsonrpc: '2.0', id: peticion.id, result: null }
+      return mock.result as T
+    }
     throw new RpcError(
       ERR_INTERNAL,
       'pywebview bridge no disponible. ¿El frontend está dentro de pywebview?',
