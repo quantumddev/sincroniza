@@ -15,7 +15,7 @@ import { PanelReglas } from '@/features/reglas/PanelReglas'
 import { PanelHistorial } from '@/features/historial/PanelHistorial'
 
 export default function App() {
-  const { cargarPerfiles, cargarReglas, perfiles, vistaActual, setVista, procesarEvento } = useAppStore()
+  const { cargarPerfiles, cargarReglas, perfiles, perfilActivo, vistaActual, setVista, procesarEvento } = useAppStore()
   const { agregar: logAgregar } = useLogStore()
   const { tema } = useTemaStore()
   const [inicializado, setInicializado] = useState(false)
@@ -90,7 +90,7 @@ export default function App() {
     )
   }
 
-  if (mostrarOnboarding && vistaActual !== 'historial' && vistaActual !== 'reglas' && vistaActual !== 'perfiles') {
+  if (mostrarOnboarding && vistaActual !== 'historial' && vistaActual !== 'reglas' && vistaActual !== 'perfiles' && vistaActual !== 'reglas_perfil') {
     return (
       <Layout
         onNuevoPerfil={() => setVista('perfiles')}
@@ -108,6 +108,8 @@ export default function App() {
         return <PanelHistorial />
       case 'reglas':
         return <PanelReglas />
+      case 'reglas_perfil':
+        return <PanelReglas perfil={perfilActivo ?? undefined} />
       case 'perfiles':
         return <PanelPerfiles />
       default:

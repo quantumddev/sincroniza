@@ -61,8 +61,8 @@ export function FormularioPerfil({ perfilEditar, onCerrar }: FormularioPerfilPro
             destino: destino.trim(),
             metodo_comparacion: metodo,
             umbral_eliminaciones: parseInt(umbral) || 10,
-            reglas_exclusion_ids: [],
-            reglas_propias: [],
+            // reglas_exclusion_ids se pobla automáticamente en el backend
+            // con todas las reglas globales activas al crear el perfil
           },
         })
         await cargarPerfiles()

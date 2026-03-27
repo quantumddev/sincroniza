@@ -5,6 +5,7 @@ import { useAppStore } from '@/state/useAppStore'
 import { BotonAccion } from '@/components/BotonAccion'
 import { SelectorRuta } from '@/components/SelectorRuta'
 import { ETIQUETAS_METODO } from '@/lib/formato'
+import { useCallback } from 'react'
 
 interface PanelConfiguracionProps {
   onSolicitarSync: () => void
@@ -18,7 +19,9 @@ export function PanelConfiguracion({ onSolicitarSync }: PanelConfiguracionProps)
     iniciarAnalisis,
     cancelarAnalisis,
     cancelarSync,
+    setVista,
   } = useAppStore()
+  const irAReglasPerfilActivo = useCallback(() => setVista('reglas_perfil'), [setVista])
 
   if (!perfilActivo) {
     return (
@@ -64,6 +67,9 @@ export function PanelConfiguracion({ onSolicitarSync }: PanelConfiguracionProps)
         </div>
 
         <div className="flex gap-2 ml-auto flex-wrap">
+          <BotonAccion variante="secundario" onClick={irAReglasPerfilActivo} disabled={ocupado}>
+            Reglas
+          </BotonAccion>
           {sincronizando ? (
             <BotonAccion variante="peligro" onClick={cancelarSync}>
               Cancelar sync
