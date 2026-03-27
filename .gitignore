@@ -31,12 +31,9 @@ logs/
 # DATA
 # =========================================
 data/
-*.sqlite
-*.sqlite3
-*.xlsx
-*.xlsm
-
-info/
+data/settings.json
+data/pending_sync.json
+data/history/*.json
 
 
 # =========================================
@@ -86,13 +83,3 @@ dist-ssr
 # =========================================
 .DS_Store
 Thumbs.db
-
-
-# =========================================
-# txt informativos
-# =========================================
-Pendientes.txt
-info_produccion.md
-Info_git.md
-Info_git_commands.md
-info_desarrollo.txt
