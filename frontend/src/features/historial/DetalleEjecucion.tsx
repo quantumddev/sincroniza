@@ -10,6 +10,13 @@ interface DetalleEjecucionProps {
 
 export function DetalleEjecucion({ resultado: r }: DetalleEjecucionProps) {
   const res = r.resumen
+  if (!res) {
+    return (
+      <div className="p-4 text-sm text-gray-400 dark:text-gray-500">
+        No hay detalles disponibles para este resultado.
+      </div>
+    )
+  }
   return (
     <div className="p-4 flex flex-col gap-4 text-sm">
       <div className="flex items-center gap-2 flex-wrap">

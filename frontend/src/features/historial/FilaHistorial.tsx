@@ -43,11 +43,17 @@ export function FilaHistorial({ item, seleccionado, onClick }: FilaHistorialProp
         {formatearDuracion(item.duracion_ejecucion)}
       </td>
       <td className="px-3 py-2 text-gray-500 dark:text-gray-400">
-        <span className="text-green-600 dark:text-green-400">+{item.resumen.nuevos}</span>
-        {' '}
-        <span className="text-blue-600 dark:text-blue-400">~{item.resumen.modificados}</span>
-        {' '}
-        <span className="text-red-600 dark:text-red-400">-{item.resumen.eliminados}</span>
+        {item.resumen ? (
+          <>
+            <span className="text-green-600 dark:text-green-400">+{item.resumen.nuevos}</span>
+            {' '}
+            <span className="text-blue-600 dark:text-blue-400">~{item.resumen.modificados}</span>
+            {' '}
+            <span className="text-red-600 dark:text-red-400">-{item.resumen.eliminados}</span>
+          </>
+        ) : (
+          <span className="text-gray-400 dark:text-gray-600 text-xs">—</span>
+        )}
       </td>
       <td className="px-3 py-2 text-gray-400 dark:text-gray-500 text-xs truncate max-w-[200px]" title={item.origen}>
         {item.origen.split(/[\\/]/).pop()}

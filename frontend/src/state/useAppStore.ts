@@ -61,7 +61,7 @@ interface AppState {
   nodosExpandidos: Set<string>
 
   // UI — vistas
-  vistaActual: 'principal' | 'historial' | 'reglas' | 'perfiles'
+  vistaActual: 'principal' | 'historial' | 'reglas' | 'perfiles' | 'reglas_perfil'
 
   // Crash recovery
   pendingSyncDetectado: boolean
@@ -247,8 +247,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
     const r = await llamarRpc<{ items: ResumenHistorial[]; total: number }>(
       'historial.listar',
       { pagina, limite },
-    )
-    set({ historial: r.items, totalHistorial: r.total })
+    ) ?? { items: [], total: 0 }
+    set({ historial: r?.items ?? [], totalHistorial: r?.total ?? 0 })
   },
 
   // ── Enrutamiento de eventos push ────────────────────────────────────────────
